@@ -15296,7 +15296,17 @@ const dictionary = [
   const offsetFromDate = new Date(2025,0,1)
   const msOffset = Date.now() - offsetFromDate
   const dayOffset = msOffset / 1000 / 60 / 60 / 24
-  const targetWord = targetWords[Math.floor(dayOffset)]
+  // const targetWord = targetWords[Math.floor(dayOffset)]
+  const targetWord = "those"
+  // let targetWordMap = {}
+  // for (let i=0;i<targetWord.length; i++) {
+  //   targetWordMap[targetWord[i]] = 0
+  // }
+  // for (let i=0;i<targetWord.length; i++) {
+  //   targetWordMap[targetWord[i]]++
+  // }
+  // console.log(targetWordMap)
+  
   const guessGrid = document.querySelector("[data-guess-grid]")
   const alertContainer = document.querySelector("[data-alert-container]")
   const keyboard = document.querySelector("[data-keyboard]")
@@ -15405,6 +15415,7 @@ const dictionary = [
       if (targetWord[index] === letter) {
         tile.dataset.state = "correct"
         key.classList.add("correct")
+        // targetWordMap[letter]--
       }
       else if (targetWord.includes(letter)) {
         tile.dataset.state = "wrong-location"
