@@ -15298,14 +15298,6 @@ const dictionary = [
   const dayOffset = msOffset / 1000 / 60 / 60 / 24
   // const targetWord = targetWords[Math.floor(dayOffset)]
   const targetWord = "those"
-  // let targetWordMap = {}
-  // for (let i=0;i<targetWord.length; i++) {
-  //   targetWordMap[targetWord[i]] = 0
-  // }
-  // for (let i=0;i<targetWord.length; i++) {
-  //   targetWordMap[targetWord[i]]++
-  // }
-  // console.log(targetWordMap)
   
   const guessGrid = document.querySelector("[data-guess-grid]")
   const alertContainer = document.querySelector("[data-alert-container]")
@@ -15380,6 +15372,34 @@ const dictionary = [
     delete lastTile.dataset.letter
   }
 
+  function setTileStates(guess, answer) {
+    const targetLetterCount = {};
+
+    for (const letter of answer) {
+        targetLetterCount[letter] = (targetLetterCount[letter] || 0) + 1;
+    }
+
+    const result = Array(guess.length).fill("wrong");
+
+    for (let i = 0; i < guess.length; i++) {
+      if (guess[i] === answer[i]) {
+          result[i] = "correct"; 
+          targetLetterCount[guess[i]]--;
+      }
+    }
+    for (let i = 0; i < guess.length; i++) {
+      if (result[i] === "correct") continue;
+
+      if (answer.includes(guess[i]) && targetLetterCount[guess[i]] > 0) {
+          result[i] = "wrong-location";
+          targetLetterCount[guess[i]]--;
+      }
+    }
+
+
+    return result;
+}
+
   function submitGame() {
     const activeTiles = [...getActiveTiles()]
     if (activeTiles.length !== WORD_LENGTH){
@@ -15398,12 +15418,11 @@ const dictionary = [
     }
 
     stopInteraction()
-    activeTiles.forEach((...params) => flipTiles(...params, guess))
-
-
+    const tileStates = setTileStates(guess, targetWord)
+    activeTiles.forEach((...params) => flipTiles(...params, tileStates, guess))
   }
 
-  function flipTiles(tile, index, array, guess) {
+  function flipTiles(tile, index, array, tileStates, guess) {
     const letter = tile.dataset.letter
     const key = keyboard.querySelector(`[data-key="${letter}"i]`)
     setTimeout(()=> {
@@ -15412,19 +15431,8 @@ const dictionary = [
 
     tile.addEventListener("transitionend", () => {
       tile.classList.remove("flip")
-      if (targetWord[index] === letter) {
-        tile.dataset.state = "correct"
-        key.classList.add("correct")
-        // targetWordMap[letter]--
-      }
-      else if (targetWord.includes(letter)) {
-        tile.dataset.state = "wrong-location"
-        key.classList.add("wrong-location")
-      }
-      else {
-        tile.dataset.state = "wrong"
-        key.classList.add("wrong")
-      }
+      tile.dataset.state = tileStates[index]
+      key.classList.add(tileStates[index])
 
       if (index === array.length -1) {
         tile.addEventListener("transitionend", () => {
