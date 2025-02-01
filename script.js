@@ -2315,6 +2315,7 @@ const targetWords = [
     "rural",
     "shave"
   ]
+  
 const dictionary = [
     "aahed",
     "aalii",
@@ -15297,7 +15298,7 @@ const dictionary = [
   const msOffset = Date.now() - offsetFromDate
   const dayOffset = msOffset / 1000 / 60 / 60 / 24
   // const targetWord = targetWords[Math.floor(dayOffset)]
-  const targetWord = "those"
+  const targetWord = targetWords[Math.floor(Math.random() * targetWords.length)];
   
   const guessGrid = document.querySelector("[data-guess-grid]")
   const alertContainer = document.querySelector("[data-alert-container]")
@@ -15469,18 +15470,33 @@ const dictionary = [
     })
   }
 
+  function resetTiles() {
+    location.reload();
+
+  }
+
   function checkWinLose(guess, tiles) {
     if (guess === targetWord) {
-      showAlert("You win", 5000)
+      showAlert("You win", 3000)
       danceTiles(tiles)
       stopInteraction()
+      setTimeout(()=> {
+        alert("Play again!")
+        startInteraction()
+        resetTiles()
+      }, 3000)
       return
     }
 
     const remainingTiles = guessGrid.querySelectorAll(":not([data-letter])")
     if (remainingTiles.length === 0) {
-      showAlert(targetWord.toUpperCase(), null)
+      showAlert("You Lost! Word: "+ targetWord.toUpperCase(), null)
       stopInteraction()
+      setTimeout(()=> {
+        alert("Play again!")
+        startInteraction()
+        resetTiles()
+      }, 3000)
     }
   }
 
