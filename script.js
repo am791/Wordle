@@ -15338,7 +15338,7 @@ const dictionary = [
         return
     }
 
-    if(e.key.match(/[a-z]/) || e.key == 'a' || e.key == "A") {
+    if(/^[a-zA-Z]$/.test(e.key)) {
         pressKey(e.key)
         return
     }
